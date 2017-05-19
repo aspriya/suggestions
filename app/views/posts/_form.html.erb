@@ -1,0 +1,62 @@
+<%= form_for(post) do |f| %>
+  <% if post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul>
+      <% post.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= f.label :title %>
+    <%= f.text_field :title, id: "title_textbox" %>
+    <p id="suggestion"> </p>
+  </div>
+
+  <div class="field">
+    <%= f.label :content %>
+    <%= f.text_area :content %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    $("#title_textbox").keyup(function(){
+      $("#suggestion").empty();
+
+      var data = $("#title_textbox").val();
+      var path = '/posts/get_titles/';
+      $.ajax({
+        url: path,
+        type: "get", //send it through get method
+        data: { 
+          term: data 
+        },
+        success: function(response) {
+          var obj = JSON.parse(response);
+          var suggestions = obj[0].title;
+          $("#suggestion").append(suggestions);
+        },
+        error: function(xhr) {
+          console.log(xhr); 
+        }
+      });
+
+    });
+
+  });
+</script>
